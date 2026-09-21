@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-900 text-slate-100">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Laboratorio Virtual: Elasticidad</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},svg:{fontCache:'global'}};</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:#0f172a}::-webkit-scrollbar-thumb{background:#334155;border-radius:3px}::-webkit-scrollbar-thumb:hover{background:#475569}</style>
+</head>
+<body class="h-full flex flex-col font-sans antialiased overflow-hidden">
+<header class="bg-slate-800 border-b border-slate-700 px-6 py-3 flex items-center justify-between shrink-0">
+<div class="flex items-center gap-3">
+<div class="bg-indigo-600 text-white p-2.5 rounded-xl font-bold text-xl shadow-lg flex items-center justify-center"><i class="fa-solid fa-cube"></i></div>
+<div><h1 class="text-lg font-bold text-white tracking-wide">Laboratorio Virtual de Elasticidad</h1><p class="text-xs text-slate-400">Mecánica de Medios Continuos & Resistencia de Materiales</p></div>
+</div>
+<div class="flex items-center gap-3">
+<button onclick="openConventions()" title="Convenciones, hipótesis y parámetros" class="text-xs bg-slate-700 hover:bg-slate-600 text-slate-200 border border-slate-600 px-3 py-1.5 rounded-lg flex items-center gap-2 transition font-medium"><i class="fa-solid fa-circle-info text-cyan-400"></i>Convenciones</button>
+<span class="text-xs bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 px-3 py-1 rounded-full font-mono flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>Entorno Interactivo 3D</span>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<aside class="w-64 bg-slate-800/90 border-r border-slate-700 p-4 flex flex-col gap-2 shrink-0 overflow-y-auto">
+<p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-2">Módulos Didácticos</p>
+<button onclick="switchTab('mod1')" id="nav-mod1" class="tab-nav-btn text-left px-3 py-2.5 rounded-lg font-medium text-sm transition flex items-center gap-3 bg-indigo-600 text-white shadow-md"><i class="fa-solid fa-cube w-5 text-center text-red-400"></i><span>1. Cubo Infinitesimal 3D</span></button>
+<button onclick="switchTab('mod2')" id="nav-mod2" class="tab-nav-btn text-left px-3 py-2.5 rounded-lg font-medium text-sm transition flex items-center gap-3 text-slate-300 hover:bg-slate-700/50 hover:text-white"><i class="fa-solid fa-table-cells-large w-5 text-center text-indigo-400"></i><span>2. Tensor & Invariantes</span></button>
+<button onclick="switchTab('mod3')" id="nav-mod3" class="tab-nav-btn text-left px-3 py-2.5 rounded-lg font-medium text-sm transition flex items-center gap-3 text-slate-300 hover:bg-slate-700/50 hover:text-white"><i class="fa-solid fa-circle-notch w-5 text-center text-amber-400"></i><span>3. Mohr 2D + 3D + Cubo</span></button>
+<button onclick="switchTab('mod4')" id="nav-mod4" class="tab-nav-btn text-left px-3 py-2.5 rounded-lg font-medium text-sm transition flex items-center gap-3 text-slate-300 hover:bg-slate-700/50 hover:text-white"><i class="fa-solid fa-draw-polygon w-5 text-center text-emerald-400"></i><span>4. Deformación & Caras</span></button>
+<button onclick="switchTab('mod5')" id="nav-mod5" class="tab-nav-btn text-left px-3 py-2.5 rounded-lg font-medium text-sm transition flex items-center gap-3 text-slate-300 hover:bg-slate-700/50 hover:text-white"><i class="fa-solid fa-microchip w-5 text-center text-cyan-400"></i><span>5. Rosetas & Galgas</span></button>
+<button onclick="switchTab('mod6')" id="nav-mod6" class="tab-nav-btn text-left px-3 py-2.5 rounded-lg font-medium text-sm transition flex items-center gap-3 text-slate-300 hover:bg-slate-700/50 hover:text-white"><i class="fa-solid fa-vial w-5 text-center text-purple-400"></i><span>6. Depósitos a Presión</span></button>
+<div class="mt-auto pt-4 border-t border-slate-700/60 text-xs text-slate-500 text-center">Laboratorio de Elasticidad • EEI / UVI</div>
+</aside>
+<main class="flex-1 overflow-y-auto bg-slate-900 p-6">
+
+<section id="mod1" class="tab-content flex flex-col gap-6"><div class="border-b border-slate-800 pb-3"><h2 class="text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-cube text-indigo-400"></i>Módulo 1: Estado Tensional en un Cubo Infinitesimal 3D</h2><p class="text-sm text-slate-400">Representación 3D con colores por eje y ocultación automática de caras traseras.</p></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6"><div class="lg:col-span-4 bg-slate-800/70 border border-slate-700 rounded-xl p-5 flex flex-col gap-4"><h3 class="font-semibold text-sm text-indigo-400 uppercase tracking-wider border-b border-slate-700 pb-2"><i class="fa-solid fa-sliders"></i> Componentes [MPa]</h3>
+<div class="space-y-4 font-mono text-xs"><div class="p-3 bg-red-950/20 border border-red-900/40 rounded-lg space-y-2"><span class="text-red-400 font-bold block border-b border-red-900/30 pb-1">Cara X (Rojo)</span><div><label class="block text-slate-300 mb-1">$\sigma_x$:</label><input type="number" id="m1_sx" value="80" step="10" oninput="updateModule1()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-white"></div><div class="grid grid-cols-2 gap-2"><div><label class="block text-slate-400 mb-1">$\tau_{xy}$:</label><input type="number" id="m1_txy" value="40" step="5" oninput="updateModule1()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-white"></div><div><label class="block text-slate-400 mb-1">$\tau_{xz}$:</label><input type="number" id="m1_txz" value="25" step="5" oninput="updateModule1()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-white"></div></div></div>
+<div class="p-3 bg-emerald-950/20 border border-emerald-900/40 rounded-lg space-y-2"><span class="text-emerald-400 font-bold block border-b border-emerald-900/30 pb-1">Cara Y (Verde)</span><div><label class="block text-slate-300 mb-1">$\sigma_y$:</label><input type="number" id="m1_sy" value="-30" step="10" oninput="updateModule1()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-white"></div><div class="grid grid-cols-2 gap-2"><div><label class="block text-slate-400 mb-1">$\tau_{yx}$:</label><input type="number" id="m1_tyx_mirror" value="40" disabled class="w-full bg-slate-900/50 border border-slate-800 rounded px-2 py-1.5 text-slate-500"></div><div><label class="block text-slate-400 mb-1">$\tau_{yz}$:</label><input type="number" id="m1_tyz" value="-15" step="5" oninput="updateModule1()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-white"></div></div></div>
+<div class="p-3 bg-blue-950/20 border border-blue-900/40 rounded-lg space-y-2"><span class="text-blue-400 font-bold block border-b border-blue-900/30 pb-1">Cara Z (Azul)</span><div><label class="block text-slate-300 mb-1">$\sigma_z$:</label><input type="number" id="m1_sz" value="50" step="10" oninput="updateModule1()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-white"></div><div class="grid grid-cols-2 gap-2"><div><label class="block text-slate-400 mb-1">$\tau_{zx}$:</label><input type="number" id="m1_tzx_mirror" value="25" disabled class="w-full bg-slate-900/50 border border-slate-800 rounded px-2 py-1.5 text-slate-500"></div><div><label class="block text-slate-400 mb-1">$\tau_{zy}$:</label><input type="number" id="m1_tzy_mirror" value="-15" disabled class="w-full bg-slate-900/50 border border-slate-800 rounded px-2 py-1.5 text-slate-500"></div></div></div></div></div>
+<div class="lg:col-span-8 flex flex-col gap-4"><div class="bg-slate-800/70 border border-slate-700 rounded-xl p-4"><div class="flex justify-between items-center mb-2"><h3 class="font-semibold text-sm text-slate-200">Elemento Cúbico Interactivo</h3><span class="text-xs text-slate-400"><i class="fa-solid fa-arrows-rotate mr-1"></i>Rotar 3D</span></div><div id="plot-mod1" class="w-full h-[460px] bg-slate-950 rounded-lg"></div></div>
+<div class="bg-slate-800/40 border border-slate-700/80 rounded-xl p-4 text-xs text-slate-300 leading-relaxed"><h4 class="font-bold text-slate-200 mb-2"><i class="fa-solid fa-book-bookmark text-indigo-400"></i> Convenio: σ positivo = tracción, τ_ij con i=normal, j=dirección. Simetría de Cauchy τ_ij=τ_ji.</h4></div></div></div></section>
+<section id="mod2" class="tab-content hidden flex flex-col gap-6"><div class="border-b border-slate-800 pb-3"><h2 class="text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-table-cells-large text-indigo-400"></i>Módulo 2: Tensor, Invariantes y Proyección</h2><p class="text-sm text-slate-400">Análisis matricial, plano de corte y vectores tensionales.</p></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6"><div class="lg:col-span-4 bg-slate-800/70 border border-slate-700 rounded-xl p-5 flex flex-col gap-4"><h3 class="font-semibold text-sm text-indigo-400 uppercase tracking-wider border-b border-slate-700 pb-2">Tensor [MPa] y n̂</h3>
+<div class="grid grid-cols-3 gap-2 font-mono text-xs text-center">
+<div><label class="text-slate-400 block">σx</label><input type="number" id="m2_sx" value="100" oninput="updateModule2()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div>
+<div><label class="text-slate-400 block">τxy</label><input type="number" id="m2_txy" value="30" oninput="updateModule2()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div>
+<div><label class="text-slate-400 block">τzx</label><input type="number" id="m2_tzx" value="15" oninput="updateModule2()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div>
+<div><label class="text-slate-500 block">τxy</label><input type="number" value="30" disabled class="w-full bg-slate-900/40 border border-slate-800 rounded px-1.5 py-1 text-slate-500"></div>
+<div><label class="text-slate-400 block">σy</label><input type="number" id="m2_sy" value="-20" oninput="updateModule2()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div>
+<div><label class="text-slate-400 block">τyz</label><input type="number" id="m2_tyz" value="25" oninput="updateModule2()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div>
+<div><label class="text-slate-500 block">τzx</label><input type="number" value="15" disabled class="w-full bg-slate-900/40 border border-slate-800 rounded px-1.5 py-1 text-slate-500"></div>
+<div><label class="text-slate-500 block">τyz</label><input type="number" value="25" disabled class="w-full bg-slate-900/40 border border-slate-800 rounded px-1.5 py-1 text-slate-500"></div>
+<div><label class="text-slate-400 block">σz</label><input type="number" id="m2_sz" value="40" oninput="updateModule2()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div></div>
+<div class="p-3 bg-slate-900/80 rounded-lg border border-slate-700/60 space-y-2 text-xs"><span class="text-indigo-300 font-bold block">Vector n̂:</span><div class="grid grid-cols-3 gap-2 font-mono">
+<div><label class="text-slate-400 block">nx</label><input type="number" id="m2_nx" value="1" step="0.1" oninput="updateModule2()" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-white"></div>
+<div><label class="text-slate-400 block">ny</label><input type="number" id="m2_ny" value="1" step="0.1" oninput="updateModule2()" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-white"></div>
+<div><label class="text-slate-400 block">nz</label><input type="number" id="m2_nz" value="1" step="0.1" oninput="updateModule2()" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-white"></div>
+</div>
+<p class="text-[10px] text-slate-500 leading-snug">n̂ se normaliza automáticamente antes de calcular T(n̂), σn y τn.</p>
+<p class="text-[11px] font-mono text-cyan-300 leading-snug">n̂ efectivo: <span id="m2_n_eff">(0.577, 0.577, 0.577)</span></p>
+<p id="m2_n_warn" class="text-[10px] text-rose-400 leading-snug hidden">⚠ n̂ ≈ (0,0,0) — se usa (0.577, 0.577, 0.577) por defecto.</p></div>
+<div class="p-3 bg-indigo-950/40 border border-indigo-800/60 rounded-lg space-y-1.5 font-mono text-xs"><div class="text-indigo-300 font-bold border-b border-indigo-800/60 pb-1">Descomposición:</div>
+<div class="flex justify-between"><span class="text-amber-400">T(n):</span><span id="m2_tn_vec" class="text-white font-bold">(0,0,0)</span></div>
+<div class="flex justify-between"><span class="text-emerald-400">σn vec:</span><span id="m2_sn_vec" class="text-emerald-300">(0,0,0)</span></div>
+<div class="flex justify-between"><span class="text-emerald-400">σn mag:</span><span id="m2_sn" class="text-emerald-400 font-bold">0 MPa</span></div>
+<div class="flex justify-between"><span class="text-purple-400">τn vec:</span><span id="m2_tau_vec" class="text-purple-300">(0,0,0)</span></div>
+<div class="flex justify-between"><span class="text-purple-400">τn mag:</span><span id="m2_tn" class="text-amber-400 font-bold">0 MPa</span></div></div></div>
+<div class="lg:col-span-8 flex flex-col gap-4"><div class="bg-slate-800/70 border border-slate-700 rounded-xl p-4"><div class="flex justify-between items-center mb-2"><h3 class="font-semibold text-sm text-slate-200">Elipsoide de Lamé, Plano y Vectores</h3><span class="text-xs text-slate-400"><i class="fa-solid fa-arrows-rotate mr-1"></i>Rotar 3D</span></div><div id="plot-mod2" class="w-full h-80 bg-slate-950 rounded-lg"></div>
+<p class="text-[10px] text-slate-500 mt-2 leading-snug"><strong class="text-slate-400">Nota:</strong> el elipsoide de Lamé usa |σᵢ| como semiejes. Si algún σᵢ &lt; 0, el lugar geométrico real del extremo de T⃗(n̂) es un hiperboloide; el dibujo fuerza una superficie cerrada para la visualización.</p></div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
+<div class="bg-slate-800/70 border border-slate-700 p-4 rounded-xl space-y-2"><h4 class="font-bold text-indigo-400 uppercase mb-2">Invariantes y Von Mises</h4>
+<div class="flex justify-between border-b border-slate-700/60 pb-1"><span class="text-slate-400">I1:</span><span id="m2_i1" class="text-white font-bold">0 MPa</span></div>
+<div class="flex justify-between border-b border-slate-700/60 pb-1"><span class="text-slate-400">I2:</span><span id="m2_i2" class="text-white font-bold">0 MPa²</span></div>
+<div class="flex justify-between border-b border-slate-700/60 pb-1"><span class="text-slate-400">I3:</span><span id="m2_i3" class="text-white font-bold">0 MPa³</span></div>
+<div class="flex justify-between border-b border-slate-700/60 pb-1"><span class="text-slate-400">J2:</span><span id="m2_j2" class="text-amber-400 font-bold">0 MPa²</span></div>
+<div class="flex justify-between"><span class="text-slate-400">σVM:</span><span id="m2_svm" class="text-emerald-400 font-bold">0 MPa</span></div></div>
+<div class="bg-slate-800/70 border border-slate-700 p-4 rounded-xl space-y-2"><h4 class="font-bold text-indigo-400 uppercase mb-2">Tensiones Principales</h4>
+<div class="flex justify-between border-b border-slate-700/60 pb-1"><span class="text-slate-400">σ1:</span><span id="m2_s1" class="text-indigo-300 font-bold">0 MPa</span></div>
+<div class="flex justify-between border-b border-slate-700/60 pb-1"><span class="text-slate-400">σ2:</span><span id="m2_s2" class="text-indigo-300 font-bold">0 MPa</span></div>
+<div class="flex justify-between"><span class="text-slate-400">σ3:</span><span id="m2_s3" class="text-indigo-300 font-bold">0 MPa</span></div></div></div></div></div></section>
+
+<section id="mod3" class="tab-content hidden flex flex-col gap-6"><div class="border-b border-slate-800 pb-3"><h2 class="text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-circle-notch text-amber-400"></i>Módulo 3: Mohr 2D + 3D + Cubo</h2><p class="text-sm text-slate-400">Tres visualizaciones sincronizadas con elementos superpuestos conmutables.</p></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6"><div class="lg:col-span-3 bg-slate-800/70 border border-slate-700 rounded-xl p-5 flex flex-col gap-4">
+<div class="flex items-center justify-between border-b border-slate-700 pb-2"><h3 class="font-semibold text-sm text-indigo-400 uppercase">Entradas</h3><div class="flex items-center gap-2"><span class="text-xs text-slate-300">3D:</span><input type="checkbox" id="m3_3d_toggle" onchange="updateModule3()" class="w-4 h-4 accent-indigo-500 rounded cursor-pointer"></div></div>
+<div class="space-y-3 font-mono text-xs">
+<div><label class="block text-slate-300 mb-1">σx [MPa]</label><input type="number" id="m3_sx" value="80" step="5" oninput="updateModule3()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-white"></div>
+<div><label class="block text-slate-300 mb-1">σy [MPa]</label><input type="number" id="m3_sy" value="-20" step="5" oninput="updateModule3()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-white"></div>
+<div><label class="block text-slate-300 mb-1">τxy [MPa]</label><input type="number" id="m3_txy" value="40" step="5" oninput="updateModule3()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-white"></div>
+<div id="m3_3d_inputs" class="space-y-3 pt-2 border-t border-slate-700/60 opacity-40 pointer-events-none transition-all"><span class="text-amber-400 font-bold block text-[11px] uppercase">3D adicionales:</span>
+<div><label class="block text-amber-300 mb-1">σz [MPa]</label><input type="number" id="m3_sz" value="50" step="5" oninput="updateModule3()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-white"></div>
+<div><label class="block text-amber-300 mb-1">τyz [MPa]</label><input type="number" id="m3_tyz" value="20" step="5" oninput="updateModule3()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-white"></div>
+<div><label class="block text-amber-300 mb-1">τzx [MPa]</label><input type="number" id="m3_tzx" value="15" step="5" oninput="updateModule3()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-white"></div></div>
+<div class="pt-2 border-t border-slate-700"><label class="block text-slate-300 mb-1 flex items-center gap-1">Inclinación θ [º] <span class="text-[10px] text-slate-500 cursor-help" title="Giro antihorario aplicado al vector n̂: n' = Rz(θ)·n̂ (θ > 0 → n̂ gira hacia +Y). Equivale a rotar el plano π_n̂ por −θ. En el Mohr 2D se dibuja el arco 2θ.">ⓘ</span></label><input type="number" id="m3_theta" value="30" step="5" oninput="updateModule3()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-white"></div></div>
+<div class="p-3 bg-slate-900/80 rounded-lg border border-slate-700/60 space-y-2 text-xs"><span class="text-indigo-300 font-bold block">Vector n̂ (cubo + Mohr 3D):</span><div class="grid grid-cols-3 gap-2 font-mono">
+<div><label class="text-slate-400 block">nx</label><input type="number" id="m3_nx" value="1" step="0.1" oninput="updateModule3()" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-white"></div>
+<div><label class="text-slate-400 block">ny</label><input type="number" id="m3_ny" value="1" step="0.1" oninput="updateModule3()" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-white"></div>
+<div><label class="text-slate-400 block">nz</label><input type="number" id="m3_nz" value="1" step="0.1" oninput="updateModule3()" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-white"></div></div>
+<p class="text-[10px] text-slate-500 leading-snug">n̂ se normaliza; después se rota en XY por θ para el cubo y Mohr 3D.</p>
+<p class="text-[11px] font-mono text-cyan-300 leading-snug">n̂ efectivo: <span id="m3_n_eff">(0.577, 0.577, 0.577)</span></p>
+<p class="text-[11px] font-mono text-amber-300 leading-snug">n̂ rotado θ: <span id="m3_n_rot">(0.577, 0.577, 0.577)</span></p>
+<p id="m3_n_warn" class="text-[10px] text-rose-400 leading-snug hidden">⚠ n̂ ≈ (0,0,0) — se usa (0.577, 0.577, 0.577) por defecto.</p></div>
+<div class="bg-indigo-950/40 border border-indigo-800/50 p-3 rounded-lg space-y-1.5 text-xs font-mono"><div class="text-indigo-300 font-bold border-b border-indigo-800/60 pb-1">Tensiones giradas θ:</div>
+<div class="flex justify-between"><span class="text-slate-400">σx':</span><span id="m3_sx_p" class="text-white">0 MPa</span></div>
+<div class="flex justify-between"><span class="text-slate-400">σy':</span><span id="m3_sy_p" class="text-white">0 MPa</span></div>
+<div class="flex justify-between"><span class="text-slate-400">τx'y':</span><span id="m3_txy_p" class="text-amber-300">0 MPa</span></div></div></div>
+<div class="lg:col-span-9 flex flex-col gap-4">
+<div class="bg-slate-800/70 border border-slate-700 rounded-xl px-4 py-2.5 flex flex-col gap-2">
+<div class="flex items-center justify-between flex-wrap gap-3"><span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Visualizaciones</span>
+<div class="flex items-center gap-5">
+<label class="flex items-center gap-2 cursor-pointer text-xs font-medium text-slate-200"><input type="checkbox" id="m3_show_mohr3d" checked onchange="updateModule3Layout()" class="w-4 h-4 accent-amber-500 rounded"> Mostrar Mohr 3D</label>
+<label class="flex items-center gap-2 cursor-pointer text-xs font-medium text-slate-200"><input type="checkbox" id="m3_show_cube" checked onchange="updateModule3Layout()" class="w-4 h-4 accent-emerald-500 rounded"> Mostrar Cubo</label></div></div>
+<div class="flex items-center justify-between flex-wrap gap-3 pt-2 border-t border-slate-700/60"><span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Elementos superpuestos</span>
+<div class="flex items-center gap-4 flex-wrap">
+<label class="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-200"><input type="checkbox" id="m3_show_xyz" checked onchange="updateModule3()" class="w-4 h-4 accent-red-500 rounded"> <span class="text-red-400">Ejes xyz</span></label>
+<label class="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-200"><input type="checkbox" id="m3_show_principal" checked onchange="updateModule3()" class="w-4 h-4 accent-pink-500 rounded"> <span class="text-pink-400">Ejes ppales</span></label>
+<label class="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-200"><input type="checkbox" id="m3_show_vector" checked onchange="updateModule3()" class="w-4 h-4 accent-amber-500 rounded"> <span class="text-amber-400">Vector tensión</span></label>
+<label class="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-200"><input type="checkbox" id="m3_show_plane" checked onchange="updateModule3()" class="w-4 h-4 accent-cyan-500 rounded"> <span class="text-cyan-400">Plano π</span></label></div></div></div>
+<div class="bg-slate-800/70 border border-slate-700 rounded-xl p-4">
+<div class="flex justify-between items-center mb-2"><h3 id="m3-mohr-title" class="font-semibold text-sm text-slate-200">Mohr 2D — plano σx-σy-τxy</h3><span class="text-[10px] text-slate-400 font-mono">σn vs τ</span></div>
+<div id="plot-mod3-2d" class="w-full h-80 bg-slate-950 rounded-lg"></div></div>
+<div id="m3-3d-row" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div id="m3-mohr3d-card" class="bg-slate-800/70 border border-slate-700 rounded-xl p-4">
+<div class="flex justify-between items-center mb-2"><h3 class="font-semibold text-sm text-slate-200">Visualización Mohr 3D</h3><span class="text-[10px] text-slate-400 font-mono">σn, τθ, τφ</span></div>
+<div class="flex flex-wrap items-center gap-3 pb-3 mb-3 border-b border-slate-700"><span class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Modo:</span>
+<label class="flex items-center gap-1.5 cursor-pointer text-xs text-slate-200 hover:text-white"><input type="radio" name="m3_mohr3d_mode" value="A" checked onchange="setMohr3DMode('A')" class="w-3.5 h-3.5 accent-purple-500 cursor-pointer"><span><strong class="text-purple-400">A</strong> · Círculos</span></label>
+<label class="flex items-center gap-1.5 cursor-pointer text-xs text-slate-200 hover:text-white"><input type="radio" name="m3_mohr3d_mode" value="B" onchange="setMohr3DMode('B')" class="w-3.5 h-3.5 accent-amber-500 cursor-pointer"><span><strong class="text-amber-400">B</strong> · Superficie</span></label>
+<label class="flex items-center gap-1.5 cursor-pointer text-xs text-slate-200 hover:text-white"><input type="radio" name="m3_mohr3d_mode" value="C" onchange="setMohr3DMode('C')" class="w-3.5 h-3.5 accent-cyan-500 cursor-pointer"><span><strong class="text-cyan-400">C</strong> · Híbrido</span></label></div>
+<div id="plot-mod3-3d" class="w-full h-80 bg-slate-950 rounded-lg"></div>
+<div id="m3-mode-desc" class="mt-3 p-3 bg-slate-900/80 border border-slate-700/60 rounded-lg text-[11px] text-slate-300 leading-relaxed"></div></div>
+<div id="m3-cube-card" class="bg-slate-800/70 border border-slate-700 rounded-xl p-4">
+<div class="flex justify-between items-center mb-2"><h3 class="font-semibold text-sm text-slate-200">Cubo — T(n̂), σₙ, τₙ</h3><span class="text-xs text-slate-400"><i class="fa-solid fa-arrows-rotate mr-1"></i>Rotar 3D</span></div>
+<div id="plot-mod3-cube" class="w-full h-80 bg-slate-950 rounded-lg"></div></div></div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono">
+<div class="bg-slate-800/70 border border-slate-700 p-3 rounded-lg text-center"><span class="text-slate-400 block mb-1">Centro C</span><span id="m3_center" class="text-white text-sm font-bold">0 MPa</span></div>
+<div class="bg-slate-800/70 border border-slate-700 p-3 rounded-lg text-center"><span class="text-slate-400 block mb-1">Radio R</span><span id="m3_radius" class="text-amber-400 text-sm font-bold">0 MPa</span></div>
+<div class="bg-slate-800/70 border border-slate-700 p-3 rounded-lg text-center"><span class="text-slate-400 block mb-1">σ₁</span><span id="m3_sig1" class="text-emerald-400 text-sm font-bold">0 MPa</span></div>
+<div class="bg-slate-800/70 border border-slate-700 p-3 rounded-lg text-center"><span class="text-slate-400 block mb-1">θp</span><span id="m3_thetap" class="text-indigo-300 text-sm font-bold">0º</span></div></div></div></div></section>
+<section id="mod4" class="tab-content hidden flex flex-col gap-6"><div class="border-b border-slate-800 pb-3"><h2 class="text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-draw-polygon text-emerald-400"></i>Módulo 4: Deformaciones y Proyecciones 2D</h2><p class="text-sm text-slate-400">Entrada por tensiones (Hooke) o por deformaciones (Lamé), material configurable y vector n̂ editable con normalización automática.</p></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6"><div class="lg:col-span-4 bg-slate-800/70 border border-slate-700 rounded-xl p-5 flex flex-col gap-4">
+<div class="border-b border-slate-700 pb-2"><span class="text-xs uppercase tracking-wider text-indigo-400 font-semibold">Modo de entrada</span>
+<div class="flex flex-col gap-1.5 mt-2 text-xs">
+<label class="flex items-center gap-2 cursor-pointer text-slate-200"><input type="radio" name="m4_mode" value="stress" checked onchange="setM4Mode()" class="w-3.5 h-3.5 accent-amber-500 cursor-pointer"><span>Tensiones <span class="text-slate-500">→</span> Deformaciones</span></label>
+<label class="flex items-center gap-2 cursor-pointer text-slate-200"><input type="radio" name="m4_mode" value="strain" onchange="setM4Mode()" class="w-3.5 h-3.5 accent-emerald-500 cursor-pointer"><span>Deformaciones <span class="text-slate-500">→</span> Tensiones</span></label></div></div>
+<div class="text-xs space-y-2"><label class="block text-slate-300 font-medium">Material:</label>
+<select id="m4_material" onchange="onM4MatChange()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white text-xs">
+<option value="210,0.3">Acero estructural (210 GPa, ν=0.30)</option>
+<option value="70,0.33">Aluminio (70 GPa, ν=0.33)</option>
+<option value="110,0.34">Titanio (110 GPa, ν=0.34)</option>
+<option value="130,0.34">Cobre (130 GPa, ν=0.34)</option>
+<option value="30,0.2">Hormigón (30 GPa, ν=0.20)</option>
+<option value="custom">Personalizado…</option></select>
+<div class="grid grid-cols-2 gap-2 font-mono">
+<div><label class="text-slate-400 block">E [GPa]</label><input type="number" id="m4_E" value="210" step="5" oninput="onM4MatChange(true)" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white"></div>
+<div><label class="text-slate-400 block">ν</label><input type="number" id="m4_nu" value="0.3" step="0.01" oninput="onM4MatChange(true)" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white"></div></div></div>
+<div class="p-3 bg-slate-900/80 rounded-lg border border-slate-700/60 space-y-2 text-xs">
+<span class="text-indigo-300 font-bold block">Vector n̂ (plano de corte):</span>
+<div class="grid grid-cols-3 gap-2 font-mono">
+<div><label class="text-slate-400 block">nx</label><input type="number" id="m4_nx" value="1" step="0.1" oninput="updateModule4()" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-white"></div>
+<div><label class="text-slate-400 block">ny</label><input type="number" id="m4_ny" value="0" step="0.1" oninput="updateModule4()" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-white"></div>
+<div><label class="text-slate-400 block">nz</label><input type="number" id="m4_nz" value="0" step="0.1" oninput="updateModule4()" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-white"></div>
+</div>
+<p class="text-[10px] text-slate-500 leading-snug">n̂ se normaliza automáticamente. Es solo la orientación del plano de corte; <strong class="text-slate-400">no cambia el estado tensional</strong>, sólo sobre qué plano se proyecta. Válido para ambos modos (σ→ε y ε→σ).</p>
+<p class="text-[11px] font-mono text-cyan-300 leading-snug">n̂ efectivo: <span id="m4_n_eff">(1.000, 0.000, 0.000)</span></p>
+<p id="m4_n_warn" class="text-[10px] text-rose-400 leading-snug hidden">⚠ n̂ ≈ (0,0,0) — se usa (0.577, 0.577, 0.577) por defecto.</p>
+</div>
+<div id="m4-stress-inputs" class="space-y-2 font-mono text-xs"><span class="text-xs uppercase tracking-wider text-amber-400 font-semibold">Tensiones [MPa]</span>
+<div class="grid grid-cols-3 gap-2">
+<div><label class="text-slate-400 block">σx</label><input type="number" id="m4_sx" value="100" step="10" oninput="updateModule4()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div>
+<div><label class="text-slate-400 block">σy</label><input type="number" id="m4_sy" value="-50" step="10" oninput="updateModule4()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div>
+<div><label class="text-slate-400 block">σz</label><input type="number" id="m4_sz" value="0" step="10" oninput="updateModule4()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div>
+<div><label class="text-slate-400 block">τxy</label><input type="number" id="m4_txy" value="30" step="5" oninput="updateModule4()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div>
+<div><label class="text-slate-400 block">τyz</label><input type="number" id="m4_tyz" value="0" step="5" oninput="updateModule4()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div>
+<div><label class="text-slate-400 block">τzx</label><input type="number" id="m4_tzx" value="0" step="5" oninput="updateModule4()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div></div></div>
+<div id="m4-strain-inputs" class="hidden space-y-2 font-mono text-xs"><span class="text-xs uppercase tracking-wider text-emerald-400 font-semibold">Deformaciones [×10⁻⁶ m/m]</span>
+<div class="grid grid-cols-3 gap-2">
+<div><label class="text-slate-400 block">εx</label><input type="number" id="m4_ex" value="548" step="10" oninput="updateModule4()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div>
+<div><label class="text-slate-400 block">εy</label><input type="number" id="m4_ey" value="-381" step="10" oninput="updateModule4()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div>
+<div><label class="text-slate-400 block">εz</label><input type="number" id="m4_ez" value="-71" step="10" oninput="updateModule4()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div>
+<div><label class="text-slate-400 block">γxy</label><input type="number" id="m4_gxy" value="371" step="10" oninput="updateModule4()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div>
+<div><label class="text-slate-400 block">γyz</label><input type="number" id="m4_gyz" value="0" step="10" oninput="updateModule4()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div>
+<div><label class="text-slate-400 block">γzx</label><input type="number" id="m4_gzx" value="0" step="10" oninput="updateModule4()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div></div></div>
+<div class="bg-slate-900/80 border border-slate-700/60 rounded-lg p-3 space-y-2 text-xs font-mono">
+<div id="m4-equation-info" class="text-[11px] text-slate-300 leading-relaxed pb-2 border-b border-slate-800"></div>
+<div id="m4-output-values" class="space-y-1"></div>
+<p id="m4_amp_warn" class="text-[10px] text-amber-400 leading-snug hidden pt-2 border-t border-slate-800">⚠ Amplificación saturada (amp = 5000). La deformación visible ya no es proporcional a la real; con estos valores las componentes son tan pequeñas que el cubo no se distinguiría del original.</p>
+</div></div>
+<div class="lg:col-span-8 flex flex-col gap-4">
+<div class="bg-slate-800/70 border border-slate-700 rounded-xl p-4"><div class="flex justify-between items-center mb-2"><h3 class="font-semibold text-sm text-slate-200">Cubo deformado y vector tensión T(n̂) sobre el plano π_n̂</h3><span class="text-xs text-slate-400"><i class="fa-solid fa-arrows-rotate mr-1"></i>Rotar 3D</span></div><div id="plot-mod4-3d" class="w-full h-80 bg-slate-950 rounded-lg"></div></div>
+<div class="bg-slate-800/70 border border-slate-700 rounded-xl p-4"><h3 class="font-semibold text-sm text-indigo-400 uppercase mb-3">Proyección 2D — T(n̂), σₙ y τₙ en cada plano</h3>
+<div class="grid grid-cols-3 gap-3">
+<div class="bg-slate-950 p-2 rounded-lg border border-slate-800"><span class="text-[11px] font-mono text-slate-400 block text-center mb-1">XY</span><div id="plot-mod4-xy" class="w-full h-40"></div></div>
+<div class="bg-slate-950 p-2 rounded-lg border border-slate-800"><span class="text-[11px] font-mono text-slate-400 block text-center mb-1">YZ</span><div id="plot-mod4-yz" class="w-full h-40"></div></div>
+<div class="bg-slate-950 p-2 rounded-lg border border-slate-800"><span class="text-[11px] font-mono text-slate-400 block text-center mb-1">ZX</span><div id="plot-mod4-zx" class="w-full h-40"></div></div></div>
+<div class="mt-3 p-2 bg-slate-900/60 border border-slate-700/60 rounded text-[10px] text-slate-400 flex items-center gap-4 justify-center">
+<span><span class="text-red-400">━</span> T (total)</span>
+<span><span class="text-emerald-400">━</span> σₙ (normal)</span>
+<span><span class="text-purple-400">━</span> τₙ (cortante)</span></div></div></div></div></section>
+
+<section id="mod5" class="tab-content hidden flex flex-col gap-6"><div class="border-b border-slate-800 pb-3"><h2 class="text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-microchip text-cyan-400"></i>Módulo 5: Rosetas de Galgas</h2></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6"><div class="lg:col-span-4 bg-slate-800/70 border border-slate-700 rounded-xl p-5 flex flex-col gap-4"><h3 class="font-semibold text-sm text-indigo-400 uppercase border-b border-slate-700 pb-2">Ángulos y Lecturas</h3>
+<div class="text-xs"><label class="block text-slate-300 mb-1 font-medium">Prediseños:</label><select id="m5_preset" onchange="setRosettePreset()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white text-xs"><option value="custom">Personalizada</option><option value="rect_0_45_90" selected>Rectangular (0-45-90)</option><option value="rect_45_90_135">Oblicua (45-90-135)</option><option value="delta_0_60_120">Delta (0-60-120)</option></select></div>
+<div class="grid grid-cols-3 gap-2 font-mono text-xs"><div><label class="text-slate-400 block">θA</label><input type="number" id="m5_thA" value="0" oninput="markCustom();updateModule5()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div><div><label class="text-slate-400 block">θB</label><input type="number" id="m5_thB" value="45" oninput="markCustom();updateModule5()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div><div><label class="text-slate-400 block">θC</label><input type="number" id="m5_thC" value="90" oninput="markCustom();updateModule5()" class="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-white"></div></div>
+<div class="space-y-2 font-mono text-xs"><div><label class="text-slate-400 block">εA [με]:</label><input type="number" id="m5_eA" value="250" oninput="updateModule5()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white"></div><div><label class="text-slate-400 block">εB [με]:</label><input type="number" id="m5_eB" value="433" oninput="updateModule5()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white"></div><div><label class="text-slate-400 block">εC [με]:</label><input type="number" id="m5_eC" value="-250" oninput="updateModule5()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white"></div></div>
+<div class="p-3 bg-slate-900/80 rounded-lg border border-slate-700/60 space-y-2 text-xs"><span class="text-indigo-300 font-bold block border-b border-slate-800 pb-1">Hooke (E,ν):</span>
+<div class="grid grid-cols-2 gap-2 font-mono"><div><label class="text-slate-400 block">E [GPa]</label><input type="number" id="m5_emod" value="210" oninput="updateModule5()" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-white"></div><div><label class="text-slate-400 block">ν</label><input type="number" id="m5_nu" value="0.3" step="0.05" oninput="updateModule5()" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-white"></div></div><p class="text-[10px] text-amber-300/80 pt-1 border-t border-slate-800">Hipótesis: tensión plana σz=0 (superficie libre).</p></div></div>
+<div class="lg:col-span-8 flex flex-col gap-4">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-slate-800/70 border border-slate-700 rounded-xl p-4"><h3 class="font-semibold text-sm text-slate-200 mb-1">Esquema</h3><div id="plot-mod5-schema" class="w-full h-56 bg-slate-950 rounded-lg"></div></div>
+<div class="bg-slate-800/70 border border-slate-700 rounded-xl p-4"><h3 class="font-semibold text-sm text-slate-200 mb-1">Mohr Deformaciones</h3><div id="plot-mod5-mohr" class="w-full h-56 bg-slate-950 rounded-lg"></div></div></div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+<div class="bg-slate-800/70 border border-slate-700 p-4 rounded-xl space-y-1.5"><h4 class="font-bold text-indigo-400 uppercase mb-2">Tensor</h4>
+<div class="flex justify-between border-b border-slate-700 pb-1"><span class="text-slate-400">εx:</span><span id="m5_ex" class="text-white font-bold">0</span></div>
+<div class="flex justify-between border-b border-slate-700 pb-1"><span class="text-slate-400">εy:</span><span id="m5_ey" class="text-white font-bold">0</span></div>
+<div class="flex justify-between border-b border-slate-700 pb-1"><span class="text-slate-400">γxy:</span><span id="m5_gxy" class="text-amber-400 font-bold">0</span></div>
+<div class="flex justify-between"><span class="text-slate-400">γmáx:</span><span id="m5_gmax" class="text-emerald-400 font-bold">0</span></div></div>
+<div class="bg-slate-800/70 border border-slate-700 p-4 rounded-xl space-y-1.5"><h4 class="font-bold text-indigo-400 uppercase mb-2">Principales</h4>
+<div class="flex justify-between border-b border-slate-700 pb-1"><span class="text-slate-400">ε1:</span><span id="m5_e1" class="text-emerald-300 font-bold">0</span></div>
+<div class="flex justify-between border-b border-slate-700 pb-1"><span class="text-slate-400">ε2:</span><span id="m5_e2" class="text-emerald-300 font-bold">0</span></div>
+<div class="flex justify-between border-b border-slate-700 pb-1"><span class="text-slate-400">θp:</span><span id="m5_tp" class="text-amber-300 font-bold">0º</span></div>
+<div class="flex justify-between items-center"><span class="text-slate-400">σ1: <span class="text-[10px] text-slate-500 cursor-help" title="Hipótesis: tensión plana (σz = 0). Fórmula: σ₁ = E/(1−ν²)·(ε₁ + ν·ε₂). Válida para galgas sobre superficie libre.">ⓘ</span></span><span id="m5_sig1" class="text-indigo-300 font-bold">0 MPa</span></div></div></div></div></div></section>
+
+<section id="mod6" class="tab-content hidden flex flex-col gap-6"><div class="border-b border-slate-800 pb-3"><h2 class="text-xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-vial text-purple-400"></i>Módulo 6: Depósitos de Pared Delgada</h2></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6"><div class="lg:col-span-4 bg-slate-800/70 border border-slate-700 rounded-xl p-5 flex flex-col gap-4"><h3 class="font-semibold text-sm text-indigo-400 uppercase border-b border-slate-700 pb-2">Material y Geometría</h3>
+<div class="text-xs"><label class="block text-slate-300 mb-1">Material:</label><select id="m6_mat" onchange="updateModule6()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white text-xs"><option value="275">Acero S275</option><option value="355">Acero S355</option><option value="210">Aluminio 210</option><option value="850">Titanio G5</option></select></div>
+<div class="space-y-3 font-mono text-xs">
+<div><label class="block text-slate-400 mb-1">p [MPa]:</label><input type="number" id="m6_p" value="2.5" step="0.5" oninput="updateModule6()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white"></div>
+<div><label class="block text-slate-400 mb-1">r [mm]:</label><input type="number" id="m6_r" value="1200" step="50" oninput="updateModule6()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white"></div>
+<div><label class="block text-slate-400 mb-1">e [mm]:</label><input type="number" id="m6_e" value="12" step="1" oninput="updateModule6()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white"></div>
+<div><label class="block text-slate-400 mb-1">FS:</label><input type="number" id="m6_fs" value="1.5" step="0.1" oninput="updateModule6()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white"></div>
+<div><label class="block text-amber-400 mb-1 flex items-center gap-1">α soldadura [º] <span class="text-[10px] text-slate-500 cursor-help" title="Ángulo medido desde el eje axial del cilindro. α=0° → soldadura longitudinal; α=90° → circunferencial.">ⓘ</span></label><input type="number" id="m6_alpha" value="45" min="0" max="90" oninput="updateModule6()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-amber-300"></div></div></div>
+<div class="lg:col-span-8 flex flex-col gap-4"><div class="bg-slate-800/70 border border-slate-700 rounded-xl p-4"><h3 class="font-semibold text-sm text-slate-200 mb-2">Von Mises vs Límite Admisible</h3><div id="plot-mod6" class="w-full h-64 bg-slate-950 rounded-lg"></div></div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
+<div class="bg-slate-800/70 border border-slate-700 p-4 rounded-xl space-y-2"><div class="flex justify-between items-center border-b border-slate-700 pb-1.5"><h4 class="font-bold text-red-400 uppercase">Cilíndrico</h4><span id="m6_check_cyl" class="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">r/e = ?</span></div>
+<div class="flex justify-between"><span class="text-slate-400">σVM:</span><span id="m6_cyl_vm" class="text-white font-bold">0 MPa</span></div>
+<div class="flex justify-between"><span class="text-slate-400">eMin:</span><span id="m6_cyl_emin" class="text-amber-300 font-bold">0 mm</span></div>
+<div class="flex justify-between"><span class="text-slate-400">Estado:</span><span id="m6_cyl_status" class="font-bold">—</span></div></div>
+<div class="bg-slate-800/70 border border-slate-700 p-4 rounded-xl space-y-2"><div class="flex justify-between items-center border-b border-slate-700 pb-1.5"><h4 class="font-bold text-indigo-400 uppercase">Esférico</h4><span id="m6_check_sph" class="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">r/e = ?</span></div>
+<div class="flex justify-between"><span class="text-slate-400">σVM:</span><span id="m6_sph_vm" class="text-white font-bold">0 MPa</span></div>
+<div class="flex justify-between"><span class="text-slate-400">eMin:</span><span id="m6_sph_emin" class="text-amber-300 font-bold">0 mm</span></div>
+<div class="flex justify-between"><span class="text-slate-400">Estado:</span><span id="m6_sph_status" class="font-bold">—</span></div></div></div>
+<div class="bg-slate-800/40 border border-slate-700/80 p-4 rounded-xl flex justify-between items-center text-xs font-mono"><span class="text-amber-400 font-bold"><i class="fa-solid fa-dumpster-fire"></i> Soldadura (α):</span><div class="flex gap-4"><span class="text-slate-300">σn: <strong id="m6_weld_sn" class="text-white">0 MPa</strong></span><span class="text-slate-300">τt: <strong id="m6_weld_tau" class="text-amber-300">0 MPa</strong></span></div></div></div></div></section>
+</main></div>
+
+<div id="conv-modal" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4" onclick="if(event.target===this)closeConventions()">
+<div class="bg-slate-800 border border-slate-600 rounded-xl max-w-3xl w-full max-h-[85vh] overflow-y-auto shadow-2xl">
+<div class="sticky top-0 bg-slate-800 border-b border-slate-700 px-6 py-4 flex items-center justify-between z-10">
+<h2 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-circle-info text-cyan-400"></i>Convenciones, hipótesis y parámetros</h2>
+<button onclick="closeConventions()" class="text-slate-400 hover:text-white transition text-2xl leading-none px-2">×</button>
+</div>
+<div class="p-6 space-y-5 text-sm text-slate-300 leading-relaxed">
+<div><h3 class="text-cyan-300 font-bold uppercase tracking-wider text-xs mb-2">Convenio de signos tensional</h3>
+<p>• Tensiones normales σ: positivas si producen tracción (vector saliente de la cara), negativas si compresión.</p>
+<p>• Tensiones tangenciales τ<sub>ij</sub>: primer subíndice i = normal a la cara, segundo j = dirección. Simetría de Cauchy: τ<sub>ij</sub> = τ<sub>ji</sub>.</p></div>
+<div><h3 class="text-cyan-300 font-bold uppercase tracking-wider text-xs mb-2">Sentido de giro de θ (Módulo 3)</h3>
+<p>• El vector n̂ se rota por <strong>Rz(+θ)</strong>: n' = (n<sub>x</sub>·cosθ − n<sub>y</sub>·sinθ, n<sub>x</sub>·sinθ + n<sub>y</sub>·cosθ, n<sub>z</sub>). Para θ > 0, n̂ gira de X hacia Y (antihorario mirando desde +Z).</p>
+<p>• Girar n̂ por +θ es equivalente a girar el plano π<sub>n̂</sub> por −θ.</p>
+<p>• En el Mohr 2D, θ se representa con un arco de <strong>2θ</strong> (desde el punto x hasta su girado x'), siguiendo la teoría clásica de Mohr.</p></div>
+<div><h3 class="text-cyan-300 font-bold uppercase tracking-wider text-xs mb-2">Normalización del vector n̂</h3>
+<p>• n̂ se normaliza automáticamente antes de cualquier cálculo. Introducir (2, 0, 0) equivale a (1, 0, 0).</p>
+<p>• Si n̂ ≈ (0, 0, 0), el sistema lo sustituye por (0.577, 0.577, 0.577) = (1,1,1)/√3 y muestra un aviso en el panel.</p>
+<p>• Cambiar n̂ no modifica el estado tensional; sólo cambia la orientación del plano de corte sobre el que se proyecta T(n̂).</p></div>
+<div><h3 class="text-cyan-300 font-bold uppercase tracking-wider text-xs mb-2">Hipótesis por módulo</h3>
+<p>• <strong>Módulos 1–4:</strong> Teoría de pequeñas deformaciones (ε ≪ 1, γ ≪ 1). Material elástico lineal isótropo.</p>
+<p>• <strong>Módulo 4 (σ→ε):</strong> Ley de Hooke generalizada. Las componentes no introducidas se consideran cero.</p>
+<p>• <strong>Módulo 4 (ε→σ):</strong> Ecuaciones de Lamé σ<sub>i</sub> = λ·tr(ε) + 2μ·ε<sub>i</sub>. Con sólo ε<sub>x</sub> ≠ 0 aparecen σ<sub>y</sub>, σ<sub>z</sub> ≠ 0 (estado confinado).</p>
+<p>• <strong>Módulo 5 (Rosetas):</strong> Hipótesis de <strong>tensión plana</strong> (σ<sub>z</sub> = 0, superficie libre). Fórmula σ₁ = E/(1−ν²)·(ε₁ + ν·ε₂).</p>
+<p>• <strong>Módulo 6 (Depósitos):</strong> Pared delgada (r/e > 10). Distribución uniforme de tensión en el espesor.</p></div>
+<div><h3 class="text-cyan-300 font-bold uppercase tracking-wider text-xs mb-2">Amplificación de la deformación (Módulo 4)</h3>
+<p>• El cubo deformado se amplifica por amp = min(0.20 / ε<sub>max</sub>, 5000). Si amp = 5000, la deformación visible ya no es proporcional a la real.</p></div>
+<div><h3 class="text-cyan-300 font-bold uppercase tracking-wider text-xs mb-2">Elipsoide de Lamé (Módulo 2)</h3>
+<p>• El lugar geométrico del extremo de T⃗(n̂) es un elipsoide sólo si todos los σ<sub>i</sub> tienen el mismo signo. Con signos mixtos, es un hiperboloide. El dibujo usa |σ<sub>i</sub>| como semiejes para garantizar una superficie cerrada.</p></div>
+<div><h3 class="text-cyan-300 font-bold uppercase tracking-wider text-xs mb-2">Elipsoide y circunferencias de Mohr 3D (Módulo 3)</h3>
+<p>• La superficie de Mohr 3D es el lugar geométrico de (σ<sub>n</sub>, τ<sub>θ</sub>, τ<sub>φ</sub>). Su proyección sobre el plano (σ<sub>n</sub>, |τ|) reproduce la región entre los tres círculos clásicos.</p></div>
+</div>
+</div>
+</div>
+
+<!-- Enlace a la versión procesada del código -->
+<script src="app.min.js"></script>
+</body>
+</html>
